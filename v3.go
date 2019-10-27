@@ -14,14 +14,14 @@ import (
     "strings"
 )
 
-type Version3 struct {
+type V3 struct {
     Main  uint // 主版本
     Minor uint // 次版本
     Mini  uint // 小版本
 }
 
 // 从版本文本中解析
-func (v3 *Version3) Parser(version, sep string) error {
+func (v3 *V3) Parser(version, sep string) error {
     if version == "" {
         return zerrors.New("version是空的")
     }
@@ -46,7 +46,7 @@ func (v3 *Version3) Parser(version, sep string) error {
 }
 
 // 从有前缀的版本文本中解析
-func (v3 *Version3) ParserHasPrefix(version, sep, prefix string) error {
+func (v3 *V3) ParserHasPrefix(version, sep, prefix string) error {
     if strings.Index(version, prefix) != 0 {
         return zerrors.New("版本前缀不正确")
     }
@@ -54,12 +54,12 @@ func (v3 *Version3) ParserHasPrefix(version, sep, prefix string) error {
 }
 
 // 转为默认格式的版本文本
-func (v3 *Version3) String() string {
+func (v3 *V3) String() string {
     return fmt.Sprintf("v%d.%d.%d", v3.Main, v3.Minor, v3.Mini)
 }
 
 // 判断当前版本大于传入的版本
-func (v3 *Version3) Gt(v *Version3) bool {
+func (v3 *V3) Gt(v *V3) bool {
     if v3.Main < v.Main {
         return false
     }
@@ -76,8 +76,13 @@ func (v3 *Version3) Gt(v *Version3) bool {
     return v3.Mini > v.Mini
 }
 
+// 判断当前版本大于或等于传入的版本
+func (v3 *V3) Gte(v *V3) bool {
+    return !v3.Lt(v)
+}
+
 // 判断当前版本小于传入的版本
-func (v3 *Version3) Le(v *Version3) bool {
+func (v3 *V3) Lt(v *V3) bool {
     if v3.Main < v.Main {
         return true
     }
@@ -94,17 +99,27 @@ func (v3 *Version3) Le(v *Version3) bool {
     return v3.Mini < v.Mini
 }
 
+// 判断当前版本小于或等于传入的版本
+func (v3 *V3) Lte(v *V3) bool {
+    return !v3.Gt(v)
+}
+
 // 判断两个版本是否相等
-func (v3 *Version3) Eq(v *Version3) bool {
+func (v3 *V3) Eq(v *V3) bool {
     return v3.Main == v.Main && v3.Minor == v.Minor && v3.Mini == v.Mini
 }
 
+// 判断两个版本是否不相等
+func (v3 *V3) Ne(v *V3) bool {
+    return v3.Main != v.Main || v3.Minor != v.Minor || v3.Mini != v.Mini
+}
+
 // 转为版本文本
-func (v3 *Version3) ToText(sep string) string {
+func (v3 *V3) ToText(sep string) string {
     return fmt.Sprintf("%d%s%d%s%d", v3.Main, sep, v3.Minor, sep, v3.Mini)
 }
 
 // 转为有前缀的版本文本
-func (v3 *Version3) ToTextHasPrefix(sep, prefix string) string {
+func (v3 *V3) ToTextHasPrefix(sep, prefix string) string {
     return fmt.Sprintf("%s%d%s%d%s%d", prefix, v3.Main, sep, v3.Minor, sep, v3.Mini)
 }

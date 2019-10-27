@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-    v1 := new(zver.Version3)
+    v1 := new(zver.V3)
     if err := v1.Parser("3.4.2", "."); err != nil {
         panic(err)
     }
@@ -24,13 +24,15 @@ func main() {
     fmt.Println(v1.ToText("_"))
     fmt.Println(v1.ToTextHasPrefix(".", "v"))
 
-    v2 := new(zver.Version3)
+    v2 := new(zver.V3)
     if err := v2.ParserHasPrefix("v3.4.3", ".", "v"); err != nil {
         panic(err)
     }
 
     fmt.Println(v1, ">", v2, ":", v1.Gt(v2))
-    fmt.Println(v1, "<", v2, ":", v1.Le(v2))
+    fmt.Println(v1, ">=", v2, ":", v1.Gte(v2))
+    fmt.Println(v1, "<", v2, ":", v1.Lt(v2))
+    fmt.Println(v1, "<=", v2, ":", v1.Lte(v2))
     fmt.Println(v1, "=", v2, ":", v1.Eq(v2))
 }
 ```
