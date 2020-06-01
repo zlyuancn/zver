@@ -10,8 +10,9 @@ package zver
 
 import (
     "fmt"
-    "github.com/zlyuancn/zerrors"
     "strings"
+
+    "github.com/zlyuancn/zerrors"
 )
 
 type V3 struct {
@@ -19,6 +20,28 @@ type V3 struct {
     Minor   uint // 次版本, 最大为4位数
     Mini    uint // 小版本, 最大为6位数
     Numeric uint // 版本数值
+}
+
+func NewV3(version string, sep ...string) (*V3, error) {
+    s := "."
+    if len(sep) > 0 {
+        s = sep[0]
+    }
+
+    ver := new(V3)
+    err := ver.Parser(version, s)
+    return ver, err
+}
+
+func NewV3WithPrefix(version, prefix string, sep ...string) (*V3, error) {
+    s := "."
+    if len(sep) > 0 {
+        s = sep[0]
+    }
+
+    ver := new(V3)
+    err := ver.ParserHasPrefix(version, s, prefix)
+    return ver, err
 }
 
 // 从版本文本中解析
@@ -61,7 +84,7 @@ func (v3 *V3) Parser(version, sep string) error {
 
 // 从有前缀的版本文本中解析
 func (v3 *V3) ParserHasPrefix(version, sep, prefix string) error {
-    if strings.Index(version, prefix) != 0 {
+    if !strings.HasPrefix(version, prefix) {
         return zerrors.New("版本前缀不正确")
     }
     return v3.Parser(version[len(prefix):], sep)
